@@ -1,3 +1,4 @@
+
 class Edge(object):
 	def __init__(self, vertice_1, vertice_2, cost, reliability):
 		self.vertice_1 = vertice_1
@@ -13,5 +14,5 @@ class Edge(object):
 	def getCost(self):
 		return self.cost
 
-	def getReliability(edge):
-		return edge.reliability
+	def getReliability(self):
+		return self.reliability
