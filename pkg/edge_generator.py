@@ -1,5 +1,5 @@
 import string
-from edge import Edge
+from .edge import Edge
 alphabet_list = list(string.ascii_uppercase)
 
 

@@ -2,7 +2,7 @@
 #Implementation of the Prim's algorithm 
 
 import string
-from edge import Edge
+from .edge import Edge
 alphabet_list = list(string.ascii_uppercase)
 
 #Function for computing the minimun spanning tree with Prim's algorithm using edges reliability
