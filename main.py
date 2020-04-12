@@ -33,7 +33,7 @@ if(Rtot >= float(reliability_goal)):
 	print("Total Reliability=" + str(Rtot))
 else: 
 	print("The reliability goal is no met just by the MST, lets perform augmentation")
-	networkComputation.doAugmentation(edges_mst, remaining_vertices, city_list, Rtot, float(reliability_goal))
+	networkComputation.computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, float(reliability_goal))
 
 
 

@@ -3,6 +3,9 @@
 
 import string
 from .edge import Edge
+from .networkConfig import GraphCandidate
+
+
 alphabet_list = list(string.ascii_uppercase)
 
 #Function for computing the minimun spanning tree with Prim's algorithm using edges reliability
@@ -108,30 +111,58 @@ def doPrimsCost(city_list, edge_list):
 
 
 #Augmentation phase algorithm 
-def doAugmentation(edges_mst,remaining_vertices, city_list, Rtot, Rg): 
+def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, Rg): 
     
-    vertices_list = edges_mst.copy()                                           #Copy of the list containing the mst edges
+    edge_list = edges_mst.copy()    #Copy of the list containing the mst edges
+
 
     for candidate in remaining_vertices: 
-        vertices_list.append(candidate) 
+        edge_list.append(candidate) 
         print(candidate)
-        # reliability = computeReliability(vertices_list)                        #call helper function to compute the all terminal reliability
-
- 
+        reliability, cost = computeReliability(edge_list, city_list)                        #call helper function to compute the all terminal reliability
+        edge_list.remove(candidate)
     return
     
 
 
 #helper function to compute the all terminal reliability of a network configuration
-# def computeReliability(vertices_list): 
+def computeReliability(edge_list, city_list): 
 
-    
-#     #find cycles in graph
-#     for vertex in vertices_list: 
+    #totalEdges = ((len(edge_list))*(len(edge_list)-1))/2
+    totalEdges = 2 ** len(edge_list)
+    print(totalEdges)
+    reliability = 0
+    cost = 0
+    reliabilityResults = []
+    for i in range(int(totalEdges)):
         
+        currentCount = list('{0:0b}'.format(i))
+        print(currentCount)
 
+        # List of cities visited by current count
+        citiesVisited = [0] * len(city_list)
 
-#     return reliability
+        # Reliability of edges included in the visit
+        currentEdgeReliability = [-1] * len(edge_list)
+        # Here, create list that contains zeros of length city_list
+        for j in range(len(edge_list)):
+            if(j < len(currentCount)):
+                if currentCount[j] == 1:
+                    edge = edge_list[j]
+                    city1 = ord(edge.vertice_1) - 65 -1
+                    city2 = ord(edge.vertice_2) - 65 -1
+                    citiesVisited[city1] = 1
+                    citiesVisited[city2] = 1
+                    currentEdgeReliability[i] = edge.reliability
+                else:
+                    currentEdgeReliability[i] = 1 - edge_list[j].reliability
+            else:
+                currentEdgeReliability[i] = 1 - edge_list[j].reliability
+        
+        # Verify if all cities visited
+        print(citiesVisited) 
+    return reliability, cost
+
 
 # #helper function for finding cycles in graph using DFS
 # def DFS()
