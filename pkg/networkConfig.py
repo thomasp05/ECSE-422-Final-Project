@@ -1,5 +1,5 @@
 
-def GraphCandidate(object):
+class GraphCandidate():
 
     def __init__(self, _cost, _reliability, _edge_list):
         self.cost = _cost
