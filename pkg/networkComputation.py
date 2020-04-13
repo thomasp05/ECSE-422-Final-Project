@@ -116,18 +116,24 @@ def doPrimsCost(city_list, edge_list):
 def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, Rg): 
     
     edge_list = edges_mst.copy()    #Copy of the list containing the mst edges
-    candidateList = []
+    candidateList = list()
+
+    #first pass for MST
+    reliability, cost = computeReliability(edge_list, city_list)
+    temList = edge_list.copy()
+    candidateList.append(GraphCandidate(cost, reliability, temList))
+
     for i in range(len(remaining_vertices)):
 
         # Index starting from i to avoid doubling up candidates
         for j in range(i, len(remaining_vertices)):
             candidate2 = remaining_vertices[j]
             edge_list.append(candidate2) 
-            #print("Candidate: ", candidate2)
 
             #call helper function to compute the all terminal reliability
             reliability, cost = computeReliability(edge_list, city_list)
-            candidateList.append(GraphCandidate(cost, reliability, edge_list))
+            temList = edge_list.copy()
+            candidateList.append(GraphCandidate(cost, reliability, temList))
 
             # Add candidate to list
             edge_list.remove(candidate2)
@@ -177,36 +183,29 @@ def computeReliability(edge_list, city_list):
             visited = g.DFS(tempEdgeList, 'A', len(city_list))
             
             if(sum(visited) == len(city_list)):
-                #print("Temp edge list: \n", tempEdgeList)
                 Rtot = 1
-                #print("Current Edge Reliability: ", currentEdgeReliability)
                 for element in range(len(currentEdgeReliability)): 
                     Rtot = Rtot * currentEdgeReliability[element]
 
-                #print("r path= " +str(Rtot))
                 totalReliability = totalReliability + Rtot       #add the reliability of the subpath to the total reliability of the configuration
-
-    #print("Total reliability = " + str(totalReliability))
 
     cost = 0
     for edge in edge_list:
         cost = cost + edge.cost
-    #print("Total cost = " + str(cost))
-
     return totalReliability, cost
 
 def parseCandidateListCost(reliability_goal, cost_constraint, optimisationCandidates):
-    optimisationCandidates.sort(key=lambda x: x.reliability, reverse=False);
+    optimisationCandidates.sort(key=lambda x: x.reliability, reverse=False)
     bestSolution = GraphCandidate(1, 0, None)
     for entry in optimisationCandidates:
-        if((entry.cost < cost_constraint) & (entry.cost < bestSolution.cost) & (entry.reliability > bestSolution.reliability) & (entry.reliability > reliability_goal)):
+        if((entry.cost <= cost_constraint) & (entry.reliability > bestSolution.reliability) & (entry.reliability > reliability_goal)):
             bestSolution = entry
     return bestSolution
 
-def parseCandidateListReliability(reliability_goal, cost_constraint, optimisationCandidates):
-    optimisationCandidates.sort(key=lambda x: x.reliability, reverse=False);
+def parseCandidateListPartA(reliability_goal, cost_constraint, optimisationCandidates):
+    optimisationCandidates.sort(key=lambda x: x.reliability, reverse=True)
     bestSolution = GraphCandidate(sys.float_info.max, 2, None)
     for entry in optimisationCandidates:
-        if((entry.reliability >= reliability_goal) & (entry.reliability <= bestSolution.reliability) & (entry.cost < bestSolution.cost)):
+        if((entry.reliability >= reliability_goal) & (entry.reliability < bestSolution.reliability)):
             bestSolution = entry
     return bestSolution
