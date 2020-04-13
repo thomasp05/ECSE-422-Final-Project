@@ -2,10 +2,7 @@
 #Implementation of the Prim's algorithm 
 
 import string
-from .edge import Edge
-from .networkConfig import GraphCandidate
-
-
+from edge import Edge
 alphabet_list = list(string.ascii_uppercase)
 
 #Function for computing the minimun spanning tree with Prim's algorithm using edges reliability
@@ -34,7 +31,7 @@ def doPrimsReliability(city_list, edge_list):
     included_vertices[candidateNumber] = 1                 #update the MST list of vertex
 
     mst_vertices_list.append(candidate)                    #append the vertex object to the MST set 
-    included_vertices[candidateNumber] = 1                 #update the MST list of vertex
+
     total_reliability = candidate.reliability              #total reliability 
     total_cost = candidate.cost                            #total cost 
    
@@ -111,74 +108,30 @@ def doPrimsCost(city_list, edge_list):
 
 
 #Augmentation phase algorithm 
-def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, Rg): 
+def doAugmentation(edges_mst,remaining_vertices, city_list, Rtot, Rg): 
     
-    edge_list = edges_mst.copy()    #Copy of the list containing the mst edges
+    vertices_list = edges_mst.copy()                                           #Copy of the list containing the mst edges
 
-
-    # for candidate in remaining_vertices: 
-        # edge_list.append(candidate) 
-        # print(candidate)
-    reliability, cost = computeReliability(edge_list, city_list)                        #call helper function to compute the all terminal reliability
-        # edge_list.remove(candidate)
+    for candidate in remaining_vertices: 
+        vertices_list.append(candidate) 
+        print(candidate)
+        reliability = computeReliability(vertices_list)                        #call helper function to compute the all terminal reliability
+        
+ 
     return
     
 
 
 #helper function to compute the all terminal reliability of a network configuration
-def computeReliability(edge_list, city_list): 
+# def computeReliability(vertices_list): 
 
-    #totalEdges = ((len(edge_list))*(len(edge_list)-1))/2
-    totalEdges = 2 ** len(edge_list)
-    print(totalEdges)
-    reliability = 0
-    cost = 0
-    reliabilityResults = []
-    totalReliability = 0                      #total reliability of this configuration
-    for i in range(int(totalEdges)):
+    
+#     #find cycles in graph
+#     for vertex in vertices_list: 
         
-        currentCount = list('{0:0b}'.format(i))
-        print(currentCount)
-
-        # List of cities visited by current count
-        citiesVisited = [0] * len(city_list)
-
-        # Reliability of edges included in the visit
-        currentEdgeReliability = [-1] * len(edge_list)
-        # Here, create list that contains zeros of length city_list
-        for j in range(len(edge_list)):
-            if(j < len(currentCount)):
-                if currentCount[j] == '1':
-                    edge = edge_list[j]
-                    city1 = ord(edge.vertice_1) - 65 -1
-                    city2 = ord(edge.vertice_2) - 65 -1
-                    citiesVisited[city1] = 1
-                    citiesVisited[city2] = 1
-                    currentEdgeReliability[j] = edge.reliability
-                else:
-                    currentEdgeReliability[j] = 1 - edge_list[j].reliability
-            else:
-                currentEdgeReliability[j] = 1 - edge_list[j].reliability
-        
-        # Verify if all cities visited
-        if(sum(citiesVisited)== len(city_list)):        #check if all cities where visited (requirement for all terminal reliability computation)
-            print("cities visited: " +str(citiesVisited)) 
-            print("Reliability array: "+ str(currentEdgeReliability))
-            print('')
-
-            Rtot = 1
-            for element in range(len(currentEdgeReliability)): 
-                Rtot = Rtot * currentEdgeReliability[element]
-           
-            print("r path= " +str(Rtot))
-            
-            totalReliability = totalReliability + Rtot       #add the reliability of the subpath to the total reliability of the configuration
-
-    print("Rtot = " + str(totalReliability))
 
 
-    return reliability, cost
+#     return reliability
 
-
-# #helper function for finding cycles in graph using DFS
-# def DFS()
+#helper function for finding cycles in graph using DFS
+def DFS()
