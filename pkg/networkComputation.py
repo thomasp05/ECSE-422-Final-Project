@@ -122,8 +122,6 @@ def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot
     reliability, cost = computeReliability(edge_list, city_list)
     temList = edge_list.copy()
     candidateList.append(GraphCandidate(cost, reliability, temList))
-
-    candidateList = []
     tempList = []
     # while there are still remaining vertex
     while(len(remaining_vertices) != 0):
