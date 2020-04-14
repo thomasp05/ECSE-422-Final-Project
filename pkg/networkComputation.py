@@ -117,29 +117,32 @@ def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot
     
     edge_list = edges_mst.copy()    #Copy of the list containing the mst edges
     candidateList = list()
+    remaining = remaining_vertices.copy()
+
+    
 
     #first pass for MST
     reliability, cost = computeReliability(edge_list, city_list)
     temList = edge_list.copy()
     candidateList.append(GraphCandidate(cost, reliability, temList))
 
-    for i in range(len(remaining_vertices)):
-
-        # Index starting from i to avoid doubling up candidates
-        for j in range(i, len(remaining_vertices)):
-            candidate2 = remaining_vertices[j]
-            edge_list.append(candidate2) 
-
-            #call helper function to compute the all terminal reliability
-            reliability, cost = computeReliability(edge_list, city_list)
-            temList = edge_list.copy()
-            candidateList.append(GraphCandidate(cost, reliability, temList))
-
-            # Add candidate to list
-            edge_list.remove(candidate2)
-
-        edge_list.append(remaining_vertices[i])
-    return candidateList
+    for c in range(len(remaining)):
+        edge_list = edges_mst.copy() 
+        for i in range(c, len(remaining)):
+            # Index starting from i to avoid doubling up candidates
+            for j in range(0,len(remaining)-i):
+                for a in range(i, len(remaining)-j):
+                    list_tmp = edge_list.copy() 
+                    for b in range(j+1): 
+                        list_tmp.append(remaining_vertices[b+a]) 
+                    #call helper function to compute the all terminal reliability
+                    reliability, cost = computeReliability(list_tmp, city_list)
+                    temList = list_tmp.copy()
+                    candidateList.append(GraphCandidate(cost, reliability, temList))
+                    list_tmp = []
+            edge_list.append(remaining_vertices[i])
+            
+    return candidateList 
     
 
 
@@ -198,7 +201,7 @@ def parseCandidateListCost(reliability_goal, cost_constraint, optimisationCandid
     optimisationCandidates.sort(key=lambda x: x.reliability, reverse=False)
     bestSolution = GraphCandidate(1, 0, None)
     for entry in optimisationCandidates:
-        if((entry.cost <= cost_constraint) & (entry.reliability > bestSolution.reliability) & (entry.reliability > reliability_goal)):
+        if((entry.cost <= cost_constraint) & (entry.reliability >= bestSolution.reliability) & (entry.reliability > reliability_goal)):
             bestSolution = entry
     return bestSolution
 
