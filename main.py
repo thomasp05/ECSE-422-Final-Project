@@ -26,6 +26,7 @@ edges_mst_cost, Rtot_cost, remaining_vertices_cost, total_cost_cost = networkCom
 
 #perform augmentation on the reliability MSTs
 optimisationCandidates_Reliability = networkComputation.computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, float(reliability_goal))
+optimisationCandidates_cost = networkComputation.computeAllTerminalReliability(edges_mst_cost, remaining_vertices_cost, city_list, Rtot_cost, float(reliability_goal))
 
 ##Part A: meet a given reliability goal 
 #check if the reliability goal is met by the MST 
@@ -46,13 +47,13 @@ else:
         print("\n\n---Part A: Meet a given reliability goal---\n")
         print("no result found for part A")
 
+
 ##Part B: maximize reliability subject to a given cost constraint 
 #results part B 
+result_reliability = networkComputation.parseCandidateListCost(float(reliability_goal), float(cost_constraint), optimisationCandidates_Reliability)
+result_cost = networkComputation.parseCandidateListCost(float(reliability_goal), float(cost_constraint), optimisationCandidates_cost)
 
-#check if we want to use Cost MST or Reliability MST 
-if(total_cost_cost < total_cost): #if the cost of the cost MST is smaller than the cost of the reliability MST, then use cost MST
-    optimisationCandidates_cost = networkComputation.computeAllTerminalReliability(edges_mst_cost, remaining_vertices_cost, city_list, Rtot_cost, float(reliability_goal))
-    result_cost = networkComputation.parseCandidateListCost(float(reliability_goal), float(cost_constraint), optimisationCandidates_cost)
+if((result_cost.reliability >= result_reliability.reliability) or (result_reliability.reliability== 0)): 
     if(result_cost.reliability != 0): 
         print("\n\n---Part B: Maximize reliability goal subject to a given cost constraint---\n")
         print("Total reliability: ", result_cost.reliability)
@@ -62,12 +63,7 @@ if(total_cost_cost < total_cost): #if the cost of the cost MST is smaller than t
         print("\n\n---Part B: Maximize reliability goal subject to a given cost constraint---\n")
         print("no result found for part B")
 else: 
-    result_reliability = networkComputation.parseCandidateListCost(float(reliability_goal), float(cost_constraint), optimisationCandidates_Reliability)
-    if(result_reliability.reliability != 0): 
-        print("\n\n---Part B: Maximize reliability goal subject to a given cost constraint---\n")
-        print("Total reliability: ", result_reliability.reliability)
-        print("Total cost: ", result_reliability.cost)
-        print("Edge list: \n", result_reliability.edge_list) 
-    else: 
-        print("\n\n---Part B: Maximize reliability goal subject to a given cost constraint---\n")
-        print("no result found for part B")
+    print("\n\n---Part B: Maximize reliability goal subject to a given cost constraint---\n")
+    print("Total reliability: ", result_reliability.reliability)
+    print("Total cost: ", result_reliability.cost)
+    print("Edge list: \n", result_reliability.edge_list) 

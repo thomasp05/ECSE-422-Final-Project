@@ -116,35 +116,40 @@ def doPrimsCost(city_list, edge_list):
 def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, Rg): 
     
     edge_list = edges_mst.copy()    #Copy of the list containing the mst edges
-    candidateList = list()
-    remaining = remaining_vertices.copy()
 
-    
-
-    #first pass for MST
+    #First pass for MST only
+    candidateList = []
     reliability, cost = computeReliability(edge_list, city_list)
     temList = edge_list.copy()
     candidateList.append(GraphCandidate(cost, reliability, temList))
 
-    for c in range(len(remaining)):
-        edge_list = edges_mst.copy() 
-        for i in range(c, len(remaining)):
-            # Index starting from i to avoid doubling up candidates
-            for j in range(0,len(remaining)-i):
-                for a in range(i, len(remaining)-j):
-                    list_tmp = edge_list.copy() 
-                    for b in range(j+1): 
-                        list_tmp.append(remaining_vertices[b+a]) 
-                    #call helper function to compute the all terminal reliability
-                    reliability, cost = computeReliability(list_tmp, city_list)
-                    temList = list_tmp.copy()
-                    candidateList.append(GraphCandidate(cost, reliability, temList))
-                    list_tmp = []
-            edge_list.append(remaining_vertices[i])
-            
+    candidateList = []
+    tempList = []
+    # while there are still remaining vertex
+    while(len(remaining_vertices) != 0):
+        tempList = []
+        #try adding one edge at a time 
+        for j in range(len(remaining_vertices)):
+            candidate2 = remaining_vertices[j]
+            temList = edge_list.copy()
+            temList.append(candidate2) 
+            #call helper function to compute the all terminal reliability
+            reliability, cost = computeReliability(temList, city_list)
+            candidateList.append(GraphCandidate(cost, reliability, temList))
+            tempList.append(GraphCandidate(cost, reliability, temList))
+
+        #sort the list to get the best edge and add it to the edge_list for the next iteration of the while loop
+        tempList.sort(key=lambda x: x.reliability, reverse=False)
+        tempList.sort(key=lambda x: x.cost, reverse=False)
+
+        betterSolution = tempList[0]
+        for item in tempList: 
+            if((item.cost <= betterSolution.cost) & (item.reliability > betterSolution.reliability)):
+                betterSolution = item
+        edge_list.append(betterSolution.edge_list[-1])
+        remaining_vertices.remove(betterSolution.edge_list[-1])
     return candidateList 
     
-
 
 #helper function to compute the all terminal reliability of a network configuration
 def computeReliability(edge_list, city_list): 
