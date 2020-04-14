@@ -111,7 +111,6 @@ def doPrimsCost(city_list, edge_list):
     return mst_vertices_list, total_reliability, remaining_vertices, total_cost
 
 
-
 #Augmentation phase algorithm 
 def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot, Rg): 
     
@@ -133,6 +132,8 @@ def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot
             temList.append(candidate2) 
             #call helper function to compute the all terminal reliability
             reliability, cost = computeReliability(temList, city_list)
+
+            #append to configuration its cost and reliability to the list that is returned by this function
             candidateList.append(GraphCandidate(cost, reliability, temList))
             tempList.append(GraphCandidate(cost, reliability, temList))
 
@@ -140,10 +141,11 @@ def computeAllTerminalReliability(edges_mst, remaining_vertices, city_list, Rtot
         tempList.sort(key=lambda x: x.reliability, reverse=False)
         tempList.sort(key=lambda x: x.cost, reverse=False)
 
-        betterSolution = tempList[0]
+        betterSolution = tempList[0]           
         for item in tempList: 
             if((item.cost <= betterSolution.cost) & (item.reliability > betterSolution.reliability)):
                 betterSolution = item
+        #add the best edge to edge_list and remove it from remaining_edge list
         edge_list.append(betterSolution.edge_list[-1])
         remaining_vertices.remove(betterSolution.edge_list[-1])
     return candidateList 
